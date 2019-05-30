@@ -1,0 +1,13 @@
+---
+
+- name: Test create table
+  shell: docker exec postgresql psql -a -d {{ db_name }} -c "create table test (id int, text varchar);"
+
+- name: Test write record
+  shell: docker exec postgresql psql -a -d {{ db_name }} -c "insert into test (id, text) values (1, 'test text');"
+
+- name: Test delete record
+  shell: docker exec postgresql psql -a -d {{ db_name }} -c "delete from test where id = 1;"
+
+- name: Test delete table
+  shell: docker exec postgresql psql -a -d {{ db_name }} -c "drop table test;"

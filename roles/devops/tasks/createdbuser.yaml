@@ -1,0 +1,12 @@
+---
+- name: create database devops
+  shell: docker exec postgresql psql -a -c "create database {{ db_name }};"
+  ignore_errors: yes
+
+- name: create user devops
+  shell: docker exec postgresql psql -a -c "create user {{ db_user }} with encrypted password '{{ db_pass }}';"
+  ignore_errors: yes
+
+- name: grant permissions to devops
+  shell: docker exec postgresql psql -a -c "grant all privileges on database {{ db_name }} to {{ db_user }};"
+  ignore_errors: yes

@@ -1,0 +1,11 @@
+---
+- name: Create postgres exporter container
+  docker_container:
+    name: postgres-exporter
+    image: "wrouesnel/postgres_exporter:latest"
+    links:
+    - "postgresql:postgresql"
+    env:
+      DATA_SOURCE_URI: postgresql://postgresql:5432/{{ db_name }}
+      DATA_SOURCE_USER: devops
+      DATA_SOURCE_PASS: devpass

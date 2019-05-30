@@ -1,0 +1,15 @@
+---
+- name: Creates postgresql data directory
+  file:
+    path: /pg_data
+    owner: 999
+    group: 999
+    state: directory
+
+- name: Create postgresql container
+  docker_container:
+    name: postgresql
+    user: 999:999
+    image: "postgres:latest"
+    volumes:
+    - "/pg_data:/var/lib/postgresql/data:rw"

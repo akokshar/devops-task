@@ -1,0 +1,23 @@
+---
+- name: Creates prometheus_data directory
+  file:
+    path: /prometheus_data
+    owner: 1001
+    group: 1001
+    state: directory
+
+- name: Copy prometheus config
+  template:
+    src: prometheus.yaml.j2
+    dest: /etc/prometheus.yaml
+
+- name: Create prometheus container
+  docker_container:
+    name: prometheus
+    image: "prom/prometheus:latest"
+    user: 1001:1001
+    links:
+    - "postgres-exporter:postgres-exporter"
+    volumes:
+    - "/etc/prometheus.yaml:/etc/prometheus/prometheus.yml:ro"
+    - "/prometheus_data:/prometheus:rw"

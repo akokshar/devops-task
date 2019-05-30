@@ -1,0 +1,52 @@
+---
+
+- name: Creates grafana_data directory
+  file:
+    path: /grafana_data
+    owner: 1001
+    group: 1001
+    state: directory
+
+- name: Creates grafana_dashboard directory
+  file:
+    path: /grafana_dashboard
+    owner: 1001
+    group: 1001
+    state: directory
+
+- name: Install grafana key
+  copy:
+    src: grafana-wildcard.key
+    dest: /grafana_data/grafana.key
+    owner: 1001
+    group: 1001
+
+- name: Install grafana certificate
+  copy:
+    src: grafana-wildcard.crt
+    dest: /grafana_data/grafana.crt
+    owner: 1001
+    group: 1001
+
+- name: Create grafana container
+  docker_container:
+    name: grafana
+    image: "grafana/grafana"
+    user: 1001:1001
+    env:
+      GF_SERVER_PROTOCOL: https
+      GF_SERVER_CERT_FILE: /etc/grafana/grafana.crt
+      GF_SERVER_CERT_KEY: /etc/grafana/grafana.key
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      # GF_USERS_ALLOW_SIGN_UP: false
+      # GF_DASHBOARDS_JSON_ENABLED: true
+      GF_DASHBOARDS_JSON_PATH: /grafana_dashboard/
+    ports:
+    - 3000:3000
+    links:
+    - "prometheus:prometheus"
+    volumes:
+    - "/grafana_data:/var/lib/grafana:rw"
+    - "/grafana_dashboard:/grafana_dashboard"
+    - "/grafana_data/grafana.crt:/etc/grafana/grafana.crt:ro"
+    - "/grafana_data/grafana.key:/etc/grafana/grafana.key:ro"
